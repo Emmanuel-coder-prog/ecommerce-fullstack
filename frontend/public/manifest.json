@@ -1,0 +1,47 @@
+{
+  "name": "AI Shop - AI-Powered E-Commerce",
+  "short_name": "AI Shop",
+  "description": "Modern e-commerce platform with AI-generated product descriptions powered by OpenAI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["shopping", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Add Product",
+      "short_name": "Add",
+      "description": "Add a new product to the store",
+      "url": "/?action=add-product",
+      "icons": [
+        {
+          "src": "/icon.svg",
+          "sizes": "any"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "files": [
+        {
+          "name": "image",
+          "accept": ["image/*"]
+        }
+      ]
+    }
+  }
+}

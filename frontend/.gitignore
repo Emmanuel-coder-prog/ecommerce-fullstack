@@ -1,0 +1,32 @@
+# Dependencies
+/node_modules
+/.next
+/out
+/build
+*.pem
+
+# Testing
+/coverage
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env*.local
+.env
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.vercel

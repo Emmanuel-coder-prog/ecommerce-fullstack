@@ -1,0 +1,49 @@
+// Prisma Schema for AI Shop E-Commerce Platform
+// Database: PostgreSQL
+// This schema defines the data models for the application
+
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  /// Unique identifier (UUID)
+  id String @id @default(cuid())
+
+  /// Product title (AI-generated from keywords)
+  title String
+
+  /// Product description (AI-generated from keywords)
+  description String
+
+  /// Stock Keeping Unit - unique identifier for inventory
+  /// Must be unique across all products
+  sku String @unique
+
+  /// Available stock quantity
+  stock Int @default(0)
+
+  /// Array of image URLs
+  images String[]
+
+  /// Featured/primary image URL (first uploaded image)
+  featuredImage String?
+
+  /// Original keywords used for AI generation
+  keywords String?
+
+  /// Track when the product was created
+  createdAt DateTime @default(now())
+
+  /// Track when the product was last updated
+  updatedAt DateTime @updatedAt
+
+  @@map("products")
+}
