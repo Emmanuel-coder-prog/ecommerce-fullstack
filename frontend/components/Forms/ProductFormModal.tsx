@@ -35,6 +35,7 @@ export default function ProductFormModal({
     keywords: '',
     sku: '',
     stock: 1,
+    price: 0,
     images: [] as string[],
   });
 
@@ -51,7 +52,10 @@ export default function ProductFormModal({
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'stock' ? parseInt(value) || 0 : value,
+      [name]:
+        name === 'stock' || name === 'price'
+          ? parseFloat(value) || 0
+          : value,
     }));
   };
 
@@ -115,6 +119,11 @@ export default function ProductFormModal({
       return;
     }
 
+    if (formData.price <= 0) {
+      toast.error('Price must be greater than 0');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -123,6 +132,7 @@ export default function ProductFormModal({
         keywords: formData.keywords,
         sku: formData.sku,
         stock: formData.stock,
+        price: formData.price,
         images: formData.images.length > 0 ? formData.images : undefined,
       });
 
@@ -133,6 +143,7 @@ export default function ProductFormModal({
         keywords: '',
         sku: '',
         stock: 1,
+        price: 0,
         images: [],
       });
 
@@ -227,6 +238,28 @@ export default function ProductFormModal({
               className="input-field"
               disabled={isLoading}
             />
+          </div>
+
+          {/* Price Field */}
+          <div>
+            <label htmlFor="price" className="block text-sm font-semibold text-gray-700 mb-2">
+              Product Price ($) <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              value={formData.price}
+              onChange={handleInputChange}
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              className="input-field"
+              disabled={isLoading}
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Enter a numeric price for the product in USD.
+            </p>
           </div>
 
           {/* Images Section */}

@@ -109,6 +109,7 @@ export class ProductsController {
       description: product.description,
       sku: product.sku,
       stock: product.stock,
+      price: product.price,
       images: product.images,
       featuredImage: product.featuredImage,
       keywords: product.keywords,

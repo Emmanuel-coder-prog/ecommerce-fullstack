@@ -1,346 +1,304 @@
-# 🛍️ AI Shop - AI-Powered E-Commerce Platform
+﻿# 🛍️ AI Shop - Full-stack E-Commerce Application
 
-A modern, full-stack e-commerce web application powered by **OpenAI** for intelligent product content generation.
+A complete AI-powered e-commerce platform built with **Next.js 14** frontend, **NestJS** backend, and **PostgreSQL** database.
 
-Built with **Next.js 14** (frontend), **NestJS** (backend), and **PostgreSQL** (database).
+This repository contains:
+- `backend/` → API server with product CRUD and AI content generation
+- `frontend/` → React-based storefront with product listing and add-product modal
+- `docker-compose.yml` → optional Docker setup for PostgreSQL, backend, and frontend
 
-## ✨ Features
+---
 
-### 🤖 AI-Powered Content Generation
-- OpenAI GPT-3.5/GPT-4 integration
-- Automatic product title generation
-- Intelligent product description generation
-- Keywords-based content customization
+## ✅ What this README includes
 
-### 🛒 Product Management
-- Browse products in responsive grid layout
-- Add new products with AI-generated content
-- Real-time product updates
-- Image URL support with featured image auto-selection
-- Stock status indicators
+1. Project overview and architecture
+2. How to install and run locally
+3. Environment variables needed
+4. Backend and frontend commands
+5. Docker alternative
+6. How to verify the app works
 
-### 📱 Progressive Web App (PWA)
-- Offline-first capability
-- App install to home screen
-- Service worker caching
-- Native-like experience
+---
 
-### 🎨 Modern User Interface
-- Responsive design (mobile, tablet, desktop)
-- Tailwind CSS styling
-- Smooth animations and transitions
-- Comprehensive error handling
-- Real-time toast notifications
+## 🧭 Project Overview
 
-### 🔒 Production Ready
-- TypeScript for type safety
-- Error handling and validation
-- CORS enabled
-- Environment-based configuration
-- SEO optimized
+The application provides:
+- AI-generated product titles and descriptions
+- Product management UI
+- Backend REST API
+- PostgreSQL persistence
+- PWA support via service worker
 
-## 🏗️ Project Structure
+Key behavior:
+- User enters `keywords`, `sku`, `stock`, and optional `images`
+- Backend sends keywords to OpenRouter via OpenAI-compatible SDK
+- AI generates product title and description
+- Backend stores the product in PostgreSQL
+- Frontend refreshes and displays the new product
+
+---
+
+## 📁 Repository Structure
 
 ```
 Ecommerce/
-├── backend/                    # NestJS API Server
-│   ├── src/
-│   │   ├── entities/          # TypeORM entities
-│   │   ├── modules/
-│   │   │   ├── ai/            # OpenAI integration
-│   │   │   └── products/      # Product management
-│   │   ├── config/            # Configuration
-│   │   └── main.ts            # Entry point
-│   ├── package.json
-│   └── README.md              # Backend documentation
-│
-├── frontend/                   # Next.js Frontend
-│   ├── app/                   # App Router pages
-│   ├── components/            # React components
-│   │   ├── Header/
-│   │   ├── Products/
-│   │   └── Forms/
-│   ├── utils/                 # Utilities and API client
-│   ├── public/                # Static assets & PWA
-│   ├── package.json
-│   └── README.md              # Frontend documentation
-│
-└── SETUP.md                    # Complete setup guide
+├── backend/                  # NestJS API server
+│   ├── prisma/               # Database schema, migrations, seed scripts
+│   ├── src/                  # Backend source code
+│   ├── package.json          # Backend dependencies and scripts
+│   └── README.md             # Backend docs
+├── frontend/                 # Next.js frontend app
+│   ├── app/                  # Pages and global layout
+│   ├── components/           # UI components
+│   ├── public/               # Static assets and PWA files
+│   ├── package.json          # Frontend dependencies and scripts
+│   └── README.md             # Frontend docs
+├── docker-compose.yml        # Docker-based local environment
+├── README.md                 # This file
+└── SETUP.md                  # Additional setup documentation
 ```
 
-## 🚀 Quick Start
+---
 
-### Prerequisites
-- Node.js 16+
+## 🔧 Prerequisites
+
+Install before you begin:
+- Node.js 16+ or 18+
+- npm
 - PostgreSQL 12+
-- OpenAI API Key
+- OpenRouter API key
 
-### Installation
+> Note: The backend uses `OPENROUTER_API_KEY` and OpenRouter-compatible OpenAI package.
 
-1. **Backend Setup**
+---
+
+## 🚀 Step-by-step Local Setup
+
+### 1. Open the workspace in VS Code
+
+Make sure you can see `backend/` and `frontend/` folders in the root workspace.
+
+### 2. Install backend dependencies
+
 ```bash
 cd backend
 npm install
-# Update .env.development with your database credentials and OpenAI API key
-npm run start:dev  # Starts on http://localhost:3001
 ```
 
-2. **Frontend Setup**
+### 3. Configure backend environment
+
+Copy the example env file and update it:
+
 ```bash
-cd frontend
-npm install
-npm run dev  # Starts on http://localhost:3000
+cd backend
+copy .env.example .env.development
 ```
 
-3. **Database**
-   - Ensure PostgreSQL is running
-   - Database will auto-create on first run
-   - 5 default products will be seeded
+Edit `backend/.env.development` to match your environment:
 
-### Access Application
-Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## 📖 Documentation
-
-- **[SETUP.md](./SETUP.md)** - Complete setup guide with detailed instructions
-- **[backend/README.md](./backend/README.md)** - Backend API documentation
-- **[frontend/README.md](./frontend/README.md)** - Frontend application documentation
-
-## 🔑 Key Technologies
-
-### Frontend
-- **Next.js 14** - React framework with App Router
-- **React 18** - UI library
-- **Tailwind CSS** - Utility-first CSS framework
-- **Axios** - HTTP client
-- **React Hot Toast** - Toast notifications
-- **Lucide React** - Icon library
-- **Next PWA** - Progressive Web App support
-
-### Backend
-- **NestJS** - Node.js framework
-- **TypeORM** - Object-Relational Mapping
-- **PostgreSQL** - Relational database
-- **OpenAI API** - AI content generation
-- **Class Validator** - Input validation
-
-### Infrastructure
-- **PostgreSQL** - Database
-- **Service Workers** - Offline support
-- **REST API** - Communication protocol
-
-## 🎯 Application Flow
-
-```
-1. User opens http://localhost:3000
-   ↓
-2. Frontend fetches products from API (GET /api/products)
-   ↓
-3. Products display in responsive grid
-   ↓
-4. User clicks "Add Product"
-   ↓
-5. Modal opens with form for:
-   - Keywords (for AI generation)
-   - SKU (unique identifier)
-   - Stock quantity
-   - Images URLs
-   ↓
-6. User submits form
-   ↓
-7. Frontend sends data to API (POST /api/products)
-   ↓
-8. Backend receives request and validates input
-   ↓
-9. Backend calls OpenAI API with keywords
-   ↓
-10. OpenAI generates product title and description
-    ↓
-11. Backend saves complete product to PostgreSQL
-    ↓
-12. Backend returns created product to frontend
-    ↓
-13. Frontend displays new product in grid
-    ↓
-14. User sees success toast notification
-```
-
-## 📊 Database Schema
-
-### Products Table
-```sql
-CREATE TABLE products (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title VARCHAR(255) NOT NULL,
-  description TEXT NOT NULL,
-  sku VARCHAR(100) UNIQUE NOT NULL,
-  stock INT DEFAULT 0,
-  images TEXT[] DEFAULT '{}',
-  featuredImage VARCHAR(500),
-  keywords VARCHAR(500),
-  createdAt TIMESTAMP DEFAULT NOW(),
-  updatedAt TIMESTAMP DEFAULT NOW()
-);
-```
-
-## 🔌 API Endpoints
-
-### GET /api/products
-Fetch all products
-```bash
-curl http://localhost:3001/api/products
-```
-
-### POST /api/products
-Create new product (AI-generated)
-```bash
-curl -X POST http://localhost:3001/api/products \
-  -H "Content-Type: application/json" \
-  -d '{
-    "keywords": "wireless headphones",
-    "sku": "WH-001",
-    "stock": 50
-  }'
-```
-
-### GET /api/products/:id
-Fetch single product
-
-### PUT /api/products/:id
-Update product
-
-### DELETE /api/products/:id
-Delete product
-
-## 🖼️ Default Seeded Products
-
-The application comes with 5 pre-seeded products:
-
-1. **Wireless Bluetooth Headphones** - Premium noise-canceling headphones
-2. **Portable USB-C Power Bank** - 20000mAh fast charging
-3. **4K USB-C Hub** - Multi-port connectivity
-4. **Mechanical Gaming Keyboard RGB** - Customizable RGB lighting
-5. **Portable SSD 1TB** - Ultra-fast external storage
-
-## 🛡️ Environment Variables
-
-### Backend (.env.development)
-```bash
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
-DATABASE_USERNAME=postgres
-DATABASE_PASSWORD=your_password
-DATABASE_NAME=ecommerce_db
+```text
+DATABASE_URL=postgresql://postgres:hello@localhost:5432/ecommerce_db
 PORT=3001
 NODE_ENV=development
-OPENAI_API_KEY=sk-your-api-key
+OPENROUTER_API_KEY=your-openrouter-api-key-here
 FRONTEND_URL=http://localhost:3000
 ```
 
-### Frontend (.env.local)
+If you use a different PostgreSQL username, password, or host, update the URL accordingly.
+
+### 4. Install frontend dependencies
+
 ```bash
+cd ../frontend
+npm install
+```
+
+### 5. Configure frontend environment
+
+Create `frontend/.env.local` with:
+
+```text
 NEXT_PUBLIC_API_URL=http://localhost:3001/api
 NODE_ENV=development
 ```
 
-## 📱 PWA Features
+### 6. Prepare the database
 
-- **Offline Support** - Browse cached products offline
-- **Installable** - Click "Install" in supported browsers
-- **Home Screen Shortcut** - Quick launch from mobile home screen
-- **Native-Like Experience** - No address bar in app mode
-- **App Shortcuts** - Quick actions from app context menu
+If PostgreSQL is running locally, create the database first:
 
-To install:
-1. Open app in Chrome, Edge, or Firefox
-2. Click Install button (or menu > "Install app")
-3. Choose location on home screen
-4. Launch like any native app
+```bash
+psql -U postgres -c "CREATE DATABASE ecommerce_db;"
+```
 
-## 🌐 Responsive Breakpoints
+Then run Prisma setup:
 
-- **Mobile**: 0px - 767px
-- **Tablet**: 768px - 1023px
-- **Desktop**: 1024px - 1279px
-- **Large**: 1280px+
+```bash
+cd backend
+npm run prisma:generate
+npm run prisma:migrate
+npm run prisma:seed
+```
 
-Product grid:
-- Mobile: 1 column
-- Tablet: 2 columns
-- Desktop: 3 columns
-- Large: 4 columns
+### 7. Start the backend server
 
-## 🚀 Deployment
+```bash
+cd backend
+npm run start:dev
+```
 
-### Backend
-- Vercel, Heroku, Railway, AWS EC2
-- See backend/README.md for detailed instructions
+Expected backend base URL:
+- `http://localhost:3001`
 
-### Frontend
-- Vercel (recommended), Netlify, Static hosting
-- See frontend/README.md for detailed instructions
+### 8. Start the frontend server
 
-## 🐛 Troubleshooting
+```bash
+cd ../frontend
+npm run dev
+```
 
-### Cannot connect to API
-- Ensure backend is running on port 3001
-- Check NEXT_PUBLIC_API_URL in frontend/.env.local
-- Verify CORS settings in backend
+Expected frontend URL:
+- `http://localhost:3000`
 
-### OpenAI API errors
-- Verify API key in .env.development
-- Check OpenAI account has available credits
-- Test API key: `curl https://api.openai.com/v1/models -H "Authorization: Bearer $OPENAI_API_KEY"`
+### 9. Open the app
 
-### Database connection errors
-- Ensure PostgreSQL is running
-- Verify connection credentials in .env.development
-- Create database if it doesn't exist
+Visit:
+- `http://localhost:3000`
 
-See [SETUP.md](./SETUP.md) for more troubleshooting tips.
+If everything is correct, the homepage should show the product grid and allow adding new products.
 
-## 📈 Performance
+---
 
-Typical metrics:
-- **Frontend Load Time**: < 2 seconds
-- **API Response Time**: < 500ms
-- **AI Generation Time**: 3-5 seconds
-- **Bundle Size**: ~150KB (frontend gzipped)
-- **Lighthouse Score**: 95+
+## 🧪 Verify the app
 
-## 🔐 Security Considerations
+### Check backend product list
 
-- Never commit `.env` files
-- Use strong database passwords
-- Rotate OpenAI API keys regularly
-- Enable HTTPS in production
-- Implement rate limiting for API
-- Validate all user inputs
+```bash
+curl http://localhost:3001/api/products
+```
 
-## 🚀 Future Enhancements
+### Create a product manually
 
-- User authentication & authorization
-- Shopping cart functionality
-- Checkout process
-- Payment integration (Stripe, PayPal)
-- Order management
-- Product reviews and ratings
-- Search and filtering
-- Product categories
-- Admin dashboard
-- Analytics and reporting
+```bash
+curl -X POST http://localhost:3001/api/products \
+  -H "Content-Type: application/json" \
+  -d '{"keywords":"wireless headphones","sku":"WH-001","stock":20}'
+```
 
-## 📝 License
+### Check frontend
 
-MIT License - feel free to use this project for personal or commercial purposes.
+Open `http://localhost:3000` and confirm product cards appear.
 
-## 🙋 Support
+---
 
-For detailed setup instructions, see [SETUP.md](./SETUP.md)
+## 📦 NPM Scripts
 
-For backend documentation, see [backend/README.md](./backend/README.md)
+### Backend commands
 
-For frontend documentation, see [frontend/README.md](./frontend/README.md)
+```bash
+cd backend
+npm install
+npm run start:dev
+npm run build
+npm run start:prod
+npm run prisma:generate
+npm run prisma:migrate
+npm run prisma:seed
+npm run prisma:studio
+```
+
+### Frontend commands
+
+```bash
+cd frontend
+npm install
+npm run dev
+npm run build
+npm run start
+npm run lint
+npm run export
+```
+
+---
+
+## 🐳 Docker Alternative
+
+If you want to run everything with Docker, use the root compose file:
+
+```bash
+docker compose up --build
+```
+
+Docker maps services as:
+- `backend` → `http://localhost:4000`
+- `frontend` → `http://localhost:3001`
+
+> Note: In Docker mode, the frontend is available on port `3001`.
+
+---
+
+## ⚙️ Environment Variables Summary
+
+### Backend `backend/.env.development`
+
+```text
+DATABASE_URL=postgresql://postgres:hello@localhost:5432/ecommerce_db
+PORT=3001
+NODE_ENV=development
+OPENROUTER_API_KEY=your-openrouter-api-key-here
+FRONTEND_URL=http://localhost:3000
+```
+
+### Frontend `frontend/.env.local`
+
+```text
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
+NODE_ENV=development
+```
+
+---
+
+## 🧠 How AI works in this app
+
+- The backend service at `backend/src/modules/ai/ai.service.ts` calls OpenRouter using the official OpenAI-compatible SDK.
+- It sends user keywords and receives JSON content with `title` and `description`.
+- If the AI call fails, the backend falls back to a safe generated title and description.
+
+---
+
+## 🔍 API Endpoints
+
+- `GET /api/products` → list all products
+- `POST /api/products` → create product with AI-generated text
+- `GET /api/products/:id` → get one product
+- `PUT /api/products/:id` → update product
+- `DELETE /api/products/:id` → delete product
+
+---
+
+## 🎯 Finish line
+
+You are done when:
+- PostgreSQL is running
+- Backend is running on `http://localhost:3001`
+- Frontend is running on `http://localhost:3000`
+- The app loads in the browser
+- Products are visible and you can add new products
+
+---
+
+## 📌 Notes
+
+- If you see AI errors, confirm `OPENROUTER_API_KEY` is valid.
+- If the frontend cannot connect, confirm `NEXT_PUBLIC_API_URL` points to the backend.
+- If the database is empty, run `npm run prisma:seed` in `backend`.
+
+---
+
+## 📚 Additional docs
+
+- `backend/README.md` for backend details
+- `frontend/README.md` for frontend details
+- `SETUP.md` for deeper setup instructions
 
 ---
 

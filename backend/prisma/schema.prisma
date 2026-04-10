@@ -5,6 +5,7 @@
 
 generator client {
   provider      = "prisma-client-js"
+  output        = "../node_modules/.prisma/client"
   binaryTargets = ["native", "linux-musl"]
 }
 
@@ -29,6 +30,9 @@ model Product {
 
   /// Available stock quantity
   stock Int @default(0)
+
+  /// Product price value
+  price Float @default(0)
 
   /// Array of image URLs
   images String[]

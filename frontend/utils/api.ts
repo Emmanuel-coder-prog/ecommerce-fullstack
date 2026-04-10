@@ -10,6 +10,7 @@ export interface Product {
   description: string;
   sku: string;
   stock: number;
+  price: number;
   images: string[];
   featuredImage: string;
   keywords: string;
@@ -27,7 +28,7 @@ class ApiClient {
 
   constructor() {
     // Get API URL from environment variables
-    this.baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+    this.baseURL = process.env.NEXT_PUBLIC_API_URL!;
 
     // Create axios instance with default config
     this.instance = axios.create({
@@ -90,6 +91,7 @@ class ApiClient {
     keywords: string;
     sku: string;
     stock: number;
+    price: number;
     images?: string[];
   }): Promise<Product> {
     try {

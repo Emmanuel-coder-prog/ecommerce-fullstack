@@ -17,6 +17,9 @@ export class CreateProductDto {
   /** Available stock quantity */
   stock!: number;
 
+  /** Product retail price */
+  price!: number;
+
   /** Array of image URLs (base64 or URLs) */
   images?: string[];
 }
@@ -38,6 +41,9 @@ export class UpdateProductDto {
   /** New stock quantity */
   stock?: number;
 
+  /** New product price */
+  price?: number;
+
   /** New image URLs */
   images?: string[];
 
@@ -58,6 +64,7 @@ export class ProductResponseDto {
   description?: string;
   sku?: string;
   stock?: number;
+  price?: number;
   images?: string[];
   featuredImage?: string | null;
   keywords?: string | null;

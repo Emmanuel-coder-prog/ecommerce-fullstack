@@ -75,8 +75,8 @@ export class ProductsService {
           description,
           sku: createProductDto.sku,
           stock: createProductDto.stock,
+          price: createProductDto.price,
           keywords: createProductDto.keywords,
-          // Use first image as featured image
           images: createProductDto.images || [],
           featuredImage:
             createProductDto.images && createProductDto.images.length > 0
@@ -107,10 +107,16 @@ export class ProductsService {
     await this.findOne(id);
 
     // Validate input if provided
-    if (updateProductDto.stock !== undefined || updateProductDto.sku) {
+    if (
+      updateProductDto.stock !== undefined ||
+      updateProductDto.sku ||
+      updateProductDto.price !== undefined ||
+      updateProductDto.keywords
+    ) {
       this.validateProductInput({
         stock: updateProductDto.stock ?? 0,
         sku: updateProductDto.sku ?? '',
+        price: updateProductDto.price,
         keywords: updateProductDto.keywords ?? '',
       });
     }
@@ -140,7 +146,6 @@ export class ProductsService {
    * @returns Confirmation message
    */
   async remove(id: string): Promise<{ message: string }> {
-    // Verify product exists before deletion
     await this.findOne(id);
 
     await this.prisma.product.delete({
@@ -156,17 +161,18 @@ export class ProductsService {
    * @param data - Product data to validate
    */
   private validateProductInput(data: any): void {
-    // Stock must be >= 0
     if (data.stock < 0) {
       throw new BadRequestException('Stock must be greater than or equal to 0');
     }
 
-    // SKU is required and must be unique (enforced by database)
+    if (data.price !== undefined && data.price !== null && data.price < 0) {
+      throw new BadRequestException('Price cannot be negative');
+    }
+
     if (!data.sku || data.sku.trim().length === 0) {
       throw new BadRequestException('SKU is required');
     }
 
-    // Keywords are required for AI generation
     if (!data.keywords || data.keywords.trim().length === 0) {
       throw new BadRequestException('Keywords are required for AI generation');
     }
