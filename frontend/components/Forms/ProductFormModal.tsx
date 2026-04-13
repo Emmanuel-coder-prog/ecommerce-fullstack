@@ -133,14 +133,16 @@ export default function ProductFormModal({
     setIsLoading(true);
 
     try {
-      // Send to API - backend will use OpenAI to generate title and description
-      const newProduct = await apiClient.createProduct({
+      const productPayload = {
         keywords: formData.keywords,
         sku: formData.sku,
-        stock: formData.stock,
-        price: formData.price,
+        stock: Number(formData.stock),
+        price: Number(formData.price),
         images: formData.images.length > 0 ? formData.images : undefined,
-      });
+      };
+
+      // Send to API - backend will use OpenAI to generate title and description
+      const newProduct = await apiClient.createProduct(productPayload);
 
       toast.success('Product created successfully!');
 

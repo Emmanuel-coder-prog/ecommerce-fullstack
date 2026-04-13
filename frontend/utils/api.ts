@@ -102,8 +102,14 @@ class ApiClient {
     price: number;
     images?: string[];
   }): Promise<Product> {
+    const payload = {
+      ...productData,
+      stock: Number(productData.stock),
+      price: Number(productData.price),
+    };
+
     try {
-      const response = await this.instance.post<Product>('/products', productData);
+      const response = await this.instance.post<Product>('/products', payload);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
