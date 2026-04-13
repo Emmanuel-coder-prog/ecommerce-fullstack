@@ -1,7 +1,22 @@
-import { Controller, Post, UploadedFile, UseInterceptors, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+  HttpCode,
+  HttpStatus,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { memoryStorage } from 'multer';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 @Controller('upload')
 export class UploadController {
@@ -9,13 +24,7 @@ export class UploadController {
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, uniqueSuffix + extname(file.originalname));
-        },
-      }),
+      storage: memoryStorage(),
       limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
       fileFilter: (req, file, cb) => {
         if (!file.mimetype.startsWith('image/')) {
@@ -23,15 +32,44 @@ export class UploadController {
         }
         cb(null, true);
       },
-    })
+    }),
   )
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      return { error: 'No file uploaded' };
+      throw new BadRequestException('No file uploaded');
     }
-    // Return the public URL for the uploaded image
+
+    if (
+      !process.env.CLOUDINARY_CLOUD_NAME ||
+      !process.env.CLOUDINARY_API_KEY ||
+      !process.env.CLOUDINARY_API_SECRET
+    ) {
+      throw new InternalServerErrorException('Cloudinary is not configured');
+    }
+
+    const uploadResult = await new Promise<UploadApiResponse>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'ecommerce',
+          resource_type: 'image',
+        },
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve(result as UploadApiResponse);
+        },
+      );
+
+      uploadStream.end(file.buffer);
+    });
+
+    if (!uploadResult?.secure_url) {
+      throw new InternalServerErrorException('Failed to upload image to Cloudinary');
+    }
+
     return {
-      url: `/uploads/${file.filename}`,
+      url: uploadResult.secure_url,
     };
   }
 }

@@ -28,7 +28,15 @@ class ApiClient {
 
   constructor() {
     // Get API URL from environment variables
-    this.baseURL = process.env.NEXT_PUBLIC_API_URL!;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+    if (!apiUrl) {
+      console.warn(
+        'NEXT_PUBLIC_API_URL is not defined. Defaulting to http://localhost:3001/api for local development.',
+      );
+    }
+
+    this.baseURL = apiUrl?.replace(/\/$/, '') || 'http://localhost:3001/api';
 
     // Create axios instance with default config
     this.instance = axios.create({

@@ -38,12 +38,14 @@ export default function ProductCard({ product }: ProductCardProps) {
     router.push(`/products/${product.id}`);
   };
 
+  const apiHost = process.env.NEXT_PUBLIC_API_URL
+    ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api$/, '').replace(/\/$/, '')
+    : 'http://localhost:3001';
+
   const imageUrl = product.featuredImage
     ? product.featuredImage.startsWith('http')
       ? product.featuredImage
-      : product.featuredImage.startsWith('/uploads/')
-      ? `http://localhost:3001${product.featuredImage}`
-      : `http://localhost:3001/uploads/${product.featuredImage}`
+      : `${apiHost}${product.featuredImage.startsWith('/') ? product.featuredImage : `/uploads/${product.featuredImage}`}`
     : null;
 
   return (

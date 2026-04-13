@@ -103,14 +103,15 @@ export default function ProductDetailPage() {
   /**
    * Get image source URL
    */
+  const apiHost = process.env.NEXT_PUBLIC_API_URL
+    ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api$/, '').replace(/\/$/, '')
+    : 'http://localhost:3001';
+
   const getImageSrc = (imageUrl: string) => {
     if (imageUrl.startsWith('http')) {
       return imageUrl;
     }
-    if (imageUrl.startsWith('/uploads/')) {
-      return `http://localhost:3001${imageUrl}`;
-    }
-    return `http://localhost:3001/uploads/${imageUrl}`;
+    return `${apiHost}${imageUrl.startsWith('/') ? imageUrl : `/uploads/${imageUrl}`}`;
   };
 
   return (
