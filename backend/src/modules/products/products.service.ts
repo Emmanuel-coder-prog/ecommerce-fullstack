@@ -59,13 +59,19 @@ export class ProductsService {
    * @returns Created product with AI-generated title and description
    */
   async create(createProductDto: CreateProductDto): Promise<Product> {
+    const normalizedCreateProductDto = {
+      ...createProductDto,
+      stock: Number(createProductDto.stock),
+      price: Number(createProductDto.price),
+    } as CreateProductDto;
+
     // Validate input
-    this.validateProductInput(createProductDto);
+    this.validateProductInput(normalizedCreateProductDto);
 
     try {
       // Generate title and description using OpenAI API
       const { title, description } = await this.aiService.generateProductContent(
-        createProductDto.keywords,
+        normalizedCreateProductDto.keywords,
       );
 
       // Create product with generated content
@@ -73,14 +79,14 @@ export class ProductsService {
         data: {
           title,
           description,
-          sku: createProductDto.sku,
-          stock: createProductDto.stock,
-          price: createProductDto.price,
-          keywords: createProductDto.keywords,
-          images: createProductDto.images || [],
+          sku: normalizedCreateProductDto.sku,
+          stock: normalizedCreateProductDto.stock,
+          price: normalizedCreateProductDto.price,
+          keywords: normalizedCreateProductDto.keywords,
+          images: normalizedCreateProductDto.images || [],
           featuredImage:
-            createProductDto.images && createProductDto.images.length > 0
-              ? createProductDto.images[0]
+            normalizedCreateProductDto.images && normalizedCreateProductDto.images.length > 0
+              ? normalizedCreateProductDto.images[0]
               : null,
         },
       });
@@ -106,30 +112,36 @@ export class ProductsService {
     // Verify product exists
     await this.findOne(id);
 
+    const normalizedUpdateProductDto: UpdateProductDto = {
+      ...updateProductDto,
+      stock: updateProductDto.stock !== undefined ? Number(updateProductDto.stock) : undefined,
+      price: updateProductDto.price !== undefined ? Number(updateProductDto.price) : undefined,
+    };
+
     // Validate input if provided
     if (
-      updateProductDto.stock !== undefined ||
-      updateProductDto.sku ||
-      updateProductDto.price !== undefined ||
-      updateProductDto.keywords
+      normalizedUpdateProductDto.stock !== undefined ||
+      normalizedUpdateProductDto.sku ||
+      normalizedUpdateProductDto.price !== undefined ||
+      normalizedUpdateProductDto.keywords
     ) {
       this.validateProductInput({
-        stock: updateProductDto.stock ?? 0,
-        sku: updateProductDto.sku ?? '',
-        price: updateProductDto.price,
-        keywords: updateProductDto.keywords ?? '',
+        stock: normalizedUpdateProductDto.stock ?? 0,
+        sku: normalizedUpdateProductDto.sku ?? '',
+        price: normalizedUpdateProductDto.price,
+        keywords: normalizedUpdateProductDto.keywords ?? '',
       });
     }
 
     // Update featured image if new images are provided
-    if (updateProductDto.images && updateProductDto.images.length > 0) {
-      updateProductDto.featuredImage = updateProductDto.images[0];
+    if (normalizedUpdateProductDto.images && normalizedUpdateProductDto.images.length > 0) {
+      normalizedUpdateProductDto.featuredImage = normalizedUpdateProductDto.images[0];
     }
 
     try {
       return await this.prisma.product.update({
         where: { id },
-        data: updateProductDto,
+        data: normalizedUpdateProductDto,
       });
     } catch (error: any) {
       if (error.code === 'P2002') {
@@ -161,12 +173,21 @@ export class ProductsService {
    * @param data - Product data to validate
    */
   private validateProductInput(data: any): void {
+    if (data.stock === undefined || data.stock === null || Number.isNaN(data.stock)) {
+      throw new BadRequestException('Stock must be a valid number');
+    }
+
     if (data.stock < 0) {
       throw new BadRequestException('Stock must be greater than or equal to 0');
     }
 
-    if (data.price !== undefined && data.price !== null && data.price < 0) {
-      throw new BadRequestException('Price cannot be negative');
+    if (data.price !== undefined && data.price !== null) {
+      if (Number.isNaN(data.price)) {
+        throw new BadRequestException('Price must be a valid number');
+      }
+      if (data.price < 0) {
+        throw new BadRequestException('Price cannot be negative');
+      }
     }
 
     if (!data.sku || data.sku.trim().length === 0) {

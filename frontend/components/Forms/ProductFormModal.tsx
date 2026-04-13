@@ -50,11 +50,17 @@ export default function ProductFormModal({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+    const numericValue = name === 'stock' || name === 'price'
+      ? Number(value.replace(/,/g, '.'))
+      : value;
+
     setFormData((prev) => ({
       ...prev,
       [name]:
         name === 'stock' || name === 'price'
-          ? parseFloat(value) || 0
+          ? Number.isNaN(numericValue)
+            ? 0
+            : numericValue
           : value,
     }));
   };
